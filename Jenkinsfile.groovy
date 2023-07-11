@@ -15,6 +15,7 @@ def buildService() {
             def folder = sh(script: 'pwd', returnStdout: true)
             env.buildFolderResult = folder.trim()
             sh """
+            docker pull 10.60.156.72/khcp/node:lts
             docker build -t 10.60.156.72/khcp/gpcp_roadmap:latest .
         """
         } catch(err){
