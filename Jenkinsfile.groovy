@@ -15,7 +15,6 @@ def buildService() {
             def folder = sh(script: 'pwd', returnStdout: true)
             env.buildFolderResult = folder.trim()
             sh """
-            yarn
             docker build -it 10.60.156.72/khcp/gpcp_roadmap:latest .
         """
         } catch(err){
