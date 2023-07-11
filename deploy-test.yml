@@ -1,0 +1,7 @@
+- hosts: 10.60.158.145
+  remote_user: app
+  tasks:
+    - name: Run new image
+      shell: |
+        cd /home/app && docker-compose up -d
+      register: result
