@@ -15,7 +15,7 @@ def buildService() {
             def folder = sh(script: 'pwd', returnStdout: true)
             env.buildFolderResult = folder.trim()
             sh """
-            docker build -it 10.60.156.72/khcp/gpcp_roadmap:latest .
+            docker build -t 10.60.156.72/khcp/gpcp_roadmap:latest .
         """
         } catch(err){
             error "Build Failure"
