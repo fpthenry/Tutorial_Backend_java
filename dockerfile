@@ -16,6 +16,9 @@ COPY --chown=node:node . /home/node/app/
 FROM base as development
 WORKDIR /home/node/app
 # Install (not ci) with dependencies, and for Linux vs. Linux Musl (which we use for -alpine)
+RUN npm config set proxy "http://10.255.188.84:3128"
+RUN npm config set https-proxy "http://10.255.188.84:3128"
+RUN npm config set strict-ssl false -g
 RUN npm install
 # Switch to the node user vs. root
 USER node
@@ -34,7 +37,7 @@ RUN npm run build
 
 ## Deploy ######################################################################
 # Use a stable nginx image
-FROM nginx:stable-alpine as deploy
+FROM nginx as deploy
 WORKDIR /home/node/app
 # Copy what we've installed/built from production
 COPY --chown=node:node --from=production /home/node/app/build /usr/share/nginx/html/
