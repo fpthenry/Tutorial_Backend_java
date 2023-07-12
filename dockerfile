@@ -19,6 +19,7 @@ WORKDIR /home/node/app
 # RUN npm config set proxy "http://10.255.188.84:3128"
 # RUN npm config set https-proxy "http://10.255.188.84:3128"
 RUN npm config set strict-ssl false -g
+RUN npm config set registry http://10.254.144.161:8081/repository/npm-all/
 RUN npm install
 # Switch to the node user vs. root
 USER node
