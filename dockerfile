@@ -38,7 +38,7 @@ RUN npm run build
 
 ## Deploy ######################################################################
 # Use a stable nginx image
-FROM nginx as deploy
+FROM 10.254.144.152/docker.io/library/nginx as deploy
 WORKDIR /home/node/app
 # Copy what we've installed/built from production
 COPY --chown=node:node --from=production /home/node/app/build /usr/share/nginx/html/
