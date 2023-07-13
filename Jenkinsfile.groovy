@@ -40,9 +40,9 @@ def unitTestAndCodeCoverage(buildType){
 def deployDevTest(version){
     echo "Version to deploy: $version"
     echo "Deploy to Test"
-    // sh """
-    //    deploy-ansible -p test_shared_lib -b dev -f deploy-test.yml
-    // """
+    sh """
+       deploy-ansible -b develop -f deploy-test.yml
+    """
 }
 
 
