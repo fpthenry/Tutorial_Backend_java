@@ -85,7 +85,7 @@ def pushImage(){
             [
                     // credentialID : "<place your Harbor credential ID stored in Jenkins here>", // using cicd_bot to push by default
                     repo_name : "khcp",
-                    image_name : "10.60.156.72/khcp/gpcp_roadmap"
+                    image_name : "gpcp_roadmap"
             ]
     )
 }
@@ -93,18 +93,10 @@ def pushImage(){
 def pushArtifact(){
     jenkinsfile_utils.pushArtifactToNexus(
             // [
-            [
-                    repo        : "Releases",
-                    groupID     : "test_shared_lib",
-                    artifactId  : "hello_world",
-                    filepath    : "target/hello-coverage-0.1.0.jar"
-            ]
-            // [
             //   repo        : "Releases",
             //   groupID     : "test_shared_lib",
             //   artifactId  : "hello_world",
             //   filepath    : "target/hello-coverage-0.1.0.jar"
-            // ]
             // ]
     )
 }
