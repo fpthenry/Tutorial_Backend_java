@@ -1,7 +1,11 @@
-- hosts: 10.60.158.145
+- hosts: 10.60.108.79
   remote_user: app
   tasks:
-    - name: Run new image
-      shell: |
-        cd /home/app && docker-compose up -d
-      register: result
+    - name: pull new docker images
+      shell: docker pull 10.60.156.72/khcp/gpcp-roadmap
+
+    - name: docker down
+      shell: cd /home/app/9.gpcp-roadmap && docker-compose down
+
+    - name: docker up
+      shell: cd /home/app/9.gpcp-roadmap && docker-compose up -d
