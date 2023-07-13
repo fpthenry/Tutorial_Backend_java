@@ -1,7 +1,7 @@
 import groovy.transform.Field
 
 @Field def useImage = true
-@Field def useArtifact = true
+@Field def useArtifact = false
 @Field def isBackend = true
 @Field def hasUnittest = true
 @Field def harborProject = "test_shared_lib"
