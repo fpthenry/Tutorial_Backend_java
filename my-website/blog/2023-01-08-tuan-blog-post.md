@@ -167,7 +167,46 @@ nhưng không đảm bảo hoàn toàn thứ tự thread của chúng chỉ tron
 
 ví dụ 1 : Thread A sử dụng tài nguyên của thread B và thread B sử dụng tài nguyên của thread A dẫn đến -> 2 thằng chờ nhau mãi vậy không kết thúc được dẫn tới gặp deadlock chỉ có 1 cách terminate nó
 
-ví dụ 2: Thread A đang sử dụng tài nguyên. thread B đang sửa tài nguyên của thread A dẫn tới -> Thread A không biết thay đổi như thế nào? sử dụng giá trị nào khi bị thay đôit => gọi là **unpredictable change** =)) lúc này cần sử dụng synchonize đồng bộ để sử dụng cho việc đó.  
+ví dụ 2: Thread A đang sử dụng tài nguyên. thread B đang sửa tài nguyên của thread A dẫn tới -> Thread A không biết thay đổi như thế nào? sử dụng giá trị nào khi bị thay đôit => gọi là **unpredictable change** =)) lúc này cần sử dụng synchonize đồng bộ để sử dụng cho việc đó. 
+
+## Runable
++ Runnable là 1 interface sử dụng để tạo new thread trong java application.
++ Các sub-class của runnble buộc phải implement phương thức run của nó 
+
+```jsx title="Ví dụ runnable"
+------------
+public class StudentRunnable implements Runnable {
+    private List<ModelMBean> student;
+
+    public StudentRunnable(List<ModelMBean> student) {
+        this.student = student;
+    }
+
+    @Override
+    public void run() {
+        if (student != null){
+            System.out.println(Thread.currentThread().getName());
+            System.out.println(student.size());
+        }
+    }
+}
+
+-------------
+public class RunnalbleSample  {
+    public static void main(String[] args) {
+        StudentRunnable st = new StudentRunnable(new ArrayList<>());
+        Thread thread = new Thread(st,"thread runnable");
+        thread.start();
+    }
+}
+------------
+**Kết quả**
+thread runnable
+0
+------------
+
+```
+
 
 A new blog post is now available at [http://localhost:3000/blog/greetings](http://localhost:3000/blog/greetings).
 
