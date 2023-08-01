@@ -12,4 +12,4 @@ tags: [greetings]
 
 XIN CHÀO!
 
-Đây là blog của tuấn với mục đích tìm hiểu về thread trong java
+Đây là blog của tuấn tìm hiểu về thread trong java
