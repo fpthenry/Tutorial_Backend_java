@@ -4,7 +4,7 @@
     - name: pull new docker images
       shell: docker pull 10.60.156.72/khcp/gpcp-roadmap:test_{{VERSION}}
 
-      - name: docker tag
+    - name: docker tag
       shell: docker tag 10.60.156.72/khcp/gpcp-roadmap:test_{{VERSION}} 10.60.156.72/khcp/gpcp-roadmap
 
     - name: docker down
