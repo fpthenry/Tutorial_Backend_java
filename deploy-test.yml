@@ -2,7 +2,10 @@
   remote_user: app
   tasks:
     - name: pull new docker images
-      shell: docker pull 10.60.156.72/khcp/gpcp-roadmap
+      shell: docker pull 10.60.156.72/khcp/gpcp-roadmap:test_{{VERSION}}
+
+      - name: docker tag
+      shell: docker tag 10.60.156.72/khcp/gpcp-roadmap:test_{{VERSION}} 10.60.156.72/khcp/gpcp-roadmap
 
     - name: docker down
       shell: cd /home/app/9.gpcp-roadmap && docker-compose down

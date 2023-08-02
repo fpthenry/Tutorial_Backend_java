@@ -41,7 +41,7 @@ def deployDevTest(version){
     echo "Version to deploy: $version"
     echo "Deploy to Test"
     sh """
-       ansible-playbook deploy-test.yml -vvvv
+       ansible-playbook deploy-test.yml -e VERSION=$version -vvvv
     """
 }
 
