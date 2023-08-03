@@ -1,5 +1,5 @@
 ---
-slug: Tuan Blog Post
+slug: tuan-blog-post
 title: Tuan Blog Post!
 authors:
   - name: Nguyễn Anh Tuấn

@@ -1,6 +1,6 @@
 ---
-slug: Tuan Blog Post
-title: Tuan Blog Post!
+slug: tuan-blog-post
+title: Tuan Blog Post
 authors:
   - name: Nguyễn Anh Tuấn
     title: Maintainer of Docusaurus
