@@ -275,19 +275,23 @@ thread runnable
 - **run()** không tạo thread mới mà join current thread ví dụ đang chạy trên main thì chạy tiếp trên hàm main mà không cần phải khởi tạo mới.
 - **đặc biệt** gọi **start** chỉ 1 lần và **run** được nhiều lần
 
-## Synchrous và Asynchrous
+## Synchronous và Asynchronous
 
 1. Với **Synchronous** sẽ block thread hiện tại đợi cho đến khi kết thúc túc là thực hiện tuần tự các task với nhau A xong mới tới B.
-2. Vói **Asynchrous** chỉ làm 1 lệnh gọi và để cho nó tự chạy và nó sẽ làm việc khác túc là bất đồng bộ các task có thể thực hiện chạy song song, đồng thời với nhau.
+2. Vói **Asynchronous** chỉ làm 1 lệnh gọi và để cho nó tự chạy và nó sẽ làm việc khác túc là bất đồng bộ các task có thể thực hiện chạy song song, đồng thời với nhau.
 
-vd: khi gọi điện thoại **Synchrous** cần đợi ngta nghe và trả lời nói chuyện kết thúc cuộc trò chuyện đó mới tiếp tục cuộc gọi khác được
-còn với **Asynchrous** gửi thư điện tử hay gui mail tay ấn nút send thì nó có gửi hay báo lỗi không xong nó tự chạy tức là không quan tâm đến kết quả trả về là khi nào mà nó sẽ thực hiện các thread tiếp theo.
+vd: khi gọi điện thoại **Synchronous** cần đợi ngta nghe và trả lời nói chuyện kết thúc cuộc trò chuyện đó mới tiếp tục cuộc gọi khác được
+còn với **Asynchronous** gửi thư điện tử hay gui mail tay ấn nút send thì nó có gửi hay báo lỗi không xong nó tự chạy tức là không quan tâm đến kết quả trả về là khi nào mà nó sẽ thực hiện các thread tiếp theo.
 
 ## Cơ chế Synchronization
 
 - là cơ chế kiểm xoát truy cập nhiều multiple thread vào shared resource(data, object....)
 - ngăn ngừa tương tác với các thread không mong muốn và tránh vấn đề liên quan đến consistent(nhất quán)
-- **Synchronization** types có 3 loại: - Synchronized method - Synchronized object - static Synchronized + Method: wait, notify, notifyall
+- **Synchronization** types có 3 loại:
+    - Synchronized method 
+    - Synchronized object 
+    - static Synchronized 
+ + Method: wait, notify, notifyall
 
 **a. Synchronize method và Synchronize object**
 ```jsx title="Ví dụ Synchronize method và Synchronize object"
