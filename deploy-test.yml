@@ -5,7 +5,7 @@
       shell: docker pull 10.60.156.72/khcp/gpcp_roadmap:{{VERSION}}
 
     - name: docker tag
-      shell: docker tag 10.60.156.72/khcp/gpcp_roadmap:{{VERSION}} 10.60.156.72/khcp/gpcp-roadmap
+      shell: docker tag 10.60.156.72/khcp/gpcp_roadmap:{{VERSION}} 10.60.156.72/khcp/gpcp_roadmap
 
     - name: docker down
       shell: cd /home/app/9.gpcp-roadmap && docker-compose down
