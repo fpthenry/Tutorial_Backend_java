@@ -28,7 +28,7 @@ tags: [greetings]
 start(): khởi tạo thread đó
 run(): chạy thread
 setName(): Đặt tên cho các tiến trình
-join(): join 2 thread lại với nhau
+join(): chạy chờ thread chết xong moi toi thread khác
 setPrioryti(): Đặt độ ưu tiên cho thread
 interupt(): kết thúc giữa chừng
 isAlive: kiểm tra xem hàm còn active không, thread còn sống không
@@ -155,6 +155,62 @@ Thread B is running 1
 
 Ta thấy thì trong một số trường hop nhất định sẽ thực hiện các chỉ số max_priority = 10, min_priority = 1, norm_priority = 5 cao sẽ ưu tiên hơn
 nhưng không đảm bảo hoàn toàn thứ tự thread của chúng chỉ trong trường hop nhất định.
+```
+
+```jsx title="Ví dụ 4: Sử dụng join() cho thread"
+Đối với phương thức Join() chờ 1 thread chết hay nói cách khác là làm cho thread
+đang chạy làm xong nhiệm vụ ngừng hoạt động thì tới tiếp tục các thread khác
+
+public class JoinThread {
+    public static void main(String[] args) {
+        testJoinMethod t1 = new testJoinMethod();
+        t1.setName(" t1 ");
+        testJoinMethod t2 = new testJoinMethod();
+        t2.setName(" t2 ");
+        testJoinMethod t3 = new testJoinMethod();
+        t3.setName(" t3 ");
+        t1.start();
+        try {
+            t1.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        t2.start();
+        t3.start();
+    }
+
+}
+
+class testJoinMethod extends Thread {
+    @Override
+    public void run() {
+        for (int i = 1; i < 5; i++) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(this.getName() + i);
+        }
+    }
+}
+
+
+**Kết quả**
+ t1 1
+ t1 2
+ t1 3
+ t1 4
+ t2 1
+ t3 1
+ t2 2
+ t3 2
+ t3 3
+ t2 3
+ t3 4
+ t2 4
+
+Ta thấy thì kết quả sau khi sử dụng method join() của t1 thì thread sẽ chạy xong hoàn toàn thread t1 rồi mới tiếp tục các thread t2,3
 ```
 
 ## Tìm hiểu về Concurency
