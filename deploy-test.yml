@@ -1,14 +1,20 @@
 - hosts: 10.60.108.79
   remote_user: app
   tasks:
-    - name: pull new docker images
-      shell: docker pull 10.60.156.72/khcp/gpcp-roadmap:{{VERSION}}
-
-    - name: docker tag
-      shell: docker tag 10.60.156.72/khcp/gpcp-roadmap:{{VERSION}} 10.60.156.72/khcp/gpcp-roadmap
-
-    - name: docker down
-      shell: cd /home/app/9.gpcp-roadmap && docker-compose down
-
-    - name: docker up
-      shell: cd /home/app/9.gpcp-roadmap && docker-compose up -d
+  - name: Backup current services for rollback develop
+    shell: |
+      cd /home/app/9.gpcp-roadmap
+      export TAG_ROLLBACK=$(TAG="" docker-compose images gpcp_roadmap | grep -v Tag | grep -v '\--' | awk '{print $3}' | uniq | tr -d '\n')
+      if [ ! -z $TAG_ROLLBACK ]; then
+        if docker images | grep 10.60.156.72/khcp/gpcp_roadmap | grep rollback | grep -v grep; then
+          docker images | grep 10.60.156.72/khcp/gpcp_roadmap | grep rollback | grep -v grep | awk '{print $3}' | xargs docker rmi -f
+        fi
+        if docker images | grep -v grep | grep 10.60.156.72/khcp/gpcp_roadmap | grep $TAG_ROLLBACK; then
+          docker tag 10.60.156.72/khcp/gpcp_roadmap:$TAG_ROLLBACK 10.60.156.72/khcp/gpcp_roadmap:rollback
+        fi
+      fi
+    ignore_errors: yes
+  - name: Run new image
+    shell: |
+      cd /home/app/9.gpcp-roadmap
+      TAG={{VERSION}} docker-compose up -d gpcp_roadmap
