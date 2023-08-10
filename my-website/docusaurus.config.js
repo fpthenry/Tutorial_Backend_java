@@ -125,7 +125,7 @@ const config = {
                 href: 'https://github.com/facebook/docusaurus',
               },
             ],
-          },
+          }          
         ],
         copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
       },
