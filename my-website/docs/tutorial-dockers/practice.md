@@ -6,13 +6,12 @@ title: Bài Tập Thực Hành
 
 ## Có bao nhiêu cách đóng gói ứng dụng springboot?
 
-**+ Có 3 cách :**
+**+ Có 2 cách :**
 ```bash
 1- Dockerfile
 
 2- Sử dụng thư viện GoogleContainerTools/jib
 
-3- Sử dụng Graalvm và Spring Boot native
 ```
 
 **Đầu tiên chúng ta nên hiểu qua về luồng đi của docker** 
@@ -118,7 +117,6 @@ tiếp đến tìm đến file bin xong copy nguồn vào eviroment variable tro
 
 + lỗi proxy: vào docker khi chạy mvn jib không kéo được jdk về -> thêm docker:// vào file setup pom.xml như trên trước khi chạy mvn jib thì ta nên pull jdk về trước là được.
 
-## Cách 3: Ít tạm thời chưa sử dụng
 
 
 ## Đối Với Project

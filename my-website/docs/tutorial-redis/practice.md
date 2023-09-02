@@ -143,6 +143,234 @@ Lettuce và Jedis: Hai thư viện được sử dụng để kết nối và t�
 ```
 
 Source code: 
+
+
+## Thực Hành Redis sử dụng docker-compose xử lý Redis + hibernate query
+1. Cấu hình docker-compose redis như trên là mình sử dụng có kết hợp với mysql như sau: 
+
+Bước 1: Cấu hình application.properties
+```bash
+# C?u hình Redis
+spring.cache.type=redis
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+spring.cache.cache-names=cache1,cache2
+spring.cache.redis.time-to-live=60000
+spring.cache.redis.cache-null-values=true
+# C?u hình ghi log Spring Boot
+logging.level.org.springframework.data.redis=DEBUG
+```
+
++ cấu hình tạo docker-compose kết hợp mysql và redis:
+```bash
+services:
+  #    Zookeeper - Kafka
+  #  MySQL
+  mysql:
+    container_name: mysql
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - '3307:3306'
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    container_name: my-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+volumes:
+  redis_data:      
+```
+
++ cấu hình RedisConfig như trong project mình cấu hình để là cacheConfig
+
+```bash
+ @Configuration
+@EnableCaching
+public class CacheConfig {
+
+    @Bean
+    public RedisSerializer<Object> redisSerializer() {
+        return new GenericJackson2JsonRedisSerializer();
+    }
+
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration() {
+        RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()));
+        return configuration;
+    }
+
+    @Bean
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        RedisCacheManager cacheManager = RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(redisCacheConfiguration())
+                .build();
+        return cacheManager;
+    }
+    @Bean
+    public RedisTemplate<String, Session> getRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Session> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        return redisTemplate;
+    }
+
+
+
+    @Bean
+    public RedisTemplate<String, StudentEntity> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, StudentEntity> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        // Set key serializer
+        template.setKeySerializer(new StringRedisSerializer());
+
+        // Set value serializer
+        RedisSerializer<StudentEntity> valueSerializer = new Jackson2JsonRedisSerializer<>(StudentEntity.class);
+        template.setValueSerializer(valueSerializer);
+
+        return template;
+    }
+}
+```
+
+Bước 2: Áp dụng
+1. Triển khai 1 ví dụ tìm list student theo tuổi của họ trong class controller và save 1 sutudent vào trong db lưu trữ trong redis
+```bash
+    @PostMapping("/insert1")
+    StudentEntity insertStudent1(
+            @RequestBody @Validated StudentEntity student) {
+        return studentService.insertStudent1(student);
+    }
+
+     @GetMapping("/byAge/{age}")
+    public ResponseEntity<List<StudentEntity>> getStudentsByAge(@PathVariable int age) {
+        List<StudentEntity> students = studentService.findStudentsByAge(age);
+        return ResponseEntity.ok(students);
+    }
+```
+2. triển khai class service
+```bash
+-------------- insert new 1 student lưu vào db-------------
+    @Cacheable(value = "cache3", key = "'#insertStudent1'+ #student.id")
+    public StudentEntity  insertStudent1(StudentEntity student) {
+        StudentEntity savedStudent = studentRepository.save(student);
+        redisTemplate.opsForValue().set("studentSave1:" + savedStudent.getId(), savedStudent);
+        return savedStudent;
+    }
+--------------------------- tìm student theo tuổi----------
+
+ public List<StudentEntity> findStudentsByAge(int age) {
+        List<StudentEntity> students = new ArrayList<>();
+
+        // Kiểm tra xem dữ liệu có trong Redis không
+        ValueOperations<String, StudentEntity> ops = redisTemplate.opsForValue();
+        String redisKey = "age:" + age;
+        boolean hasKey = redisTemplate.hasKey(redisKey);
+
+        if (hasKey) {
+            StudentEntity cachedStudent = ops.get(redisKey);
+            students.add(cachedStudent);
+        } else {
+            // Nếu không có trong Redis, thực hiện truy vấn Hibernate
+            students = studentRepository.findStudentsByAge(age);
+
+            // Lưu dữ liệu vào Redis để sử dụng cho lần sau
+            if (!students.isEmpty()) {
+                StudentEntity firstStudent = students.get(0);
+                ops.set(redisKey, firstStudent);
+            }
+        }
+        return students;
+    }
+
+```
+
+3. lớp cuối truy vấn db trong repository
+
+```bash
+          @Query(value = "select * from student s where s.age = ?1", nativeQuery = true)
+        List<StudentEntity> findStudentsByAge (int age);
+```
+
+4. Sau khi code xong chạy kết quả trên post man theo api sau 
+ví dự tôi muốn tìm list student trong db với age bằng 22
+```bash
+ localhost:8080/api/v1/students/byAge/22
+```
+
+5. kiểm tra redis bằng cmd
+```bash
+ 1. gõ lệnh: $redis-cli  sử dụng Command Line Interface (CLI) của Redis để kiểm tra dữ liệu đã lưu trữ:. redis 127.0.0.1:6379>
+ 2. $KEYS * với lệnh này để để liệt kê tất cả các khóa hiện có trong Redis.
+ 3. $Get age:22 để tìm kiếm kết quả với tuổi bằng 22 thì trong redis đã lưu dữ liệu của tôi chưa
+```
+Kết quả sau khi tôi chạy ra như sau:
+
+```bash
+ PS F:\1.sourcecode\1.road_map\5.minIO\SpringbootMYSQLDocker> redis-cli
+127.0.0.1:6379> KEYS *
+1) "rollno"
+2) "cache2::finALl"
+3) "\xac\xed\x00\x05t\x00\x04USER"
+4) "cache2::#update"
+5) "cache1::#getAls"
+6) "name"
+7) "age:22"
+8) "cache1::#save"
+127.0.0.1:6379> GET tuannnn1:22
+(nil)
+127.0.0.1:6379> GET age:22
+"{\"id\":2,\"name\":\"tuannnn1\",\"age\":22}"
+127.0.0.1:6379>
+```
+  Tiếp theo là save 1 student
+
+```bash
+  save 1 student sử dụng postman localhost:8080/api/v1/students/insert1
+  {
+    "name": "tuananhtu2k",
+    "age":23
+  }
+
+  sau khi tôi save 1 student vào trong db lúc này đồng thời lưu student vào trong bộ nhớ redis nữa
+  tôi muốn kiểm tra nhhư sau :
+  đầu tiên tìm liệt kê ra xem có chưa :
+  127.0.0.1:6379> KEYS *
+ 1) "cache2::finALl"
+ 2) "\xac\xed\x00\x05t\x00\x04USER"
+ 3) "studentSave:19"
+ 4) "studentSave1:22"
+ 5) "cache1::#getAls"
+ 6) "cache2::#update"
+ 7) "studentSave:18"
+ 8) "studentSave:21"
+ 9) "cache3::#insertStudent10"
+10) "studentSave:20"
+11) "age:22"
+12) "rollno"
+13) "age:23"
+14) "name"
+15) "cache3::#insertStudent1"
+16) "cache1::#save"
+
+sau đó tìm value mà tôi mới save student vào với id là 22
+127.0.0.1:6379> get studentSave1:22
+"{\"id\":22,\"name\":\"tuananhtu2k\",\"age\":23}"
+127.0.0.1:6379>
+
+```
+
+Done! thank for watch My source code: http://10.60.156.11/khcp/daotao/tuansv/redis_update
+
 Thank for watching!! 
 
 

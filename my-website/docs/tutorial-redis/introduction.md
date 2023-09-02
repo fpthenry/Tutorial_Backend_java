@@ -181,3 +181,10 @@ Sử dụng công cụ giám sát và log để theo dõi hiệu suất và sự
 
 + **Bảo mật**:
 Đảm bảo cấu hình bảo mật phù hợp, bao gồm mật khẩu, giao thức mã hóa và giới hạn quyền truy cập.
+
+
+Tác giả: [Nguyễn Anh Tuấn](https://github.com/FPTooHenry)
+
+![Hình ảnh tác giả](https://github.com/FPTooHenry.png)
+
+

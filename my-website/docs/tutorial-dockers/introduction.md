@@ -129,8 +129,11 @@ Có một số tiêu chuẩn và quy tắc tối ưu về hiệu năng và kích
 + 50% developer hoàn toàn không quét Docker image để tìm các lỗ hổng.
 
 + 20% Docker image có lỗ hổng bảo mật có thể được giải quyết bằng cách xây dựng lại.
-## Các tiêu chuẩn về tối ưu và kích cỡ
-+ **Tối ưu Kích thước Hình ảnh**: Sử dụng các công cụ như Docker Slim, Multi-Stage Builds và các phương pháp khác để loại bỏ các thành phần không cần thiết và giảm kích thước hình ảnh.
+## Các tiêu chuẩn về tối ưu hóa về kích thước của 1 docker image?
++ **Tối ưu Kích thước image**: Sử dụng các công cụ như Docker Slim, Multi-Stage Builds và các phương pháp khác để loại bỏ các thành phần không cần thiết và giảm kích thước hình ảnh.
++ **Chọn đúng base image**: có thể truy cập thông tin kick cỡ image thông qua dockerhub -> tags -> tìm kiếm image phù hợp với phiên bản trong đó có rất nhiều các phiên bản với nhiều các kích cỡ khác nhau nhưng chúng ta có thể ưu tiên xem những image có jre với kích cỡ nhỏ hơn rất nhiều  hoặc ví dụ thay vì sử dụng node:12 thì có thể chuyển quan node:12-alpine sẽ thấy được rằng dung lượng image giảm đi rất là nhiều.
++ **Tối ưu hóa layers**: Docker image được xây dựng từ 1 loạt các layer. mỗi câu lệnh trong docker-file đề tạo ra 1 read-only layer bọc vào image...(xem thêm gg)
++ **Loại bỏ hoặc không sử dụng những packages hay file không cần thiết**: "khi build các container để chạy trong production, mọi package không sử dụng, hoặc các pakage được bao gồm cho mục đích debug, cần được loại bỏ."(hãy sử dụng **.dockerignore files**)
 + **Cài đặt Tùy chỉnh Kernel**: Đối với các ứng dụng yêu cầu hiệu năng cao, bạn có thể cài đặt tùy chỉnh kernel để tối ưu hóa việc sử dụng tài nguyên.
 ........
 
@@ -149,4 +152,64 @@ Có một số tiêu chuẩn và quy tắc tối ưu về hiệu năng và kích
 
 **Tái sử dụng và chia sẻ**: Tệp cấu hình Docker Compose có thể dễ dàng chia sẻ và tái sử dụng, giúp giảm đáng kể thời gian triển khai và khắc phục sự không đồng nhất giữa các môi trường.
 
+
+## Các thuật ngữ trong doker-compose
+```bash
+sử dụng lệnh $ docker-compose (name-tag)
+
+   build       Build or rebuild services
+  config      Parse, resolve and render compose file in canonical format
+  cp          Copy files/folders between a service container and the local filesystem
+  create      Creates containers for a service.
+  down        Stop and remove containers, networks
+  events      Receive real time events from containers.
+  exec        Execute a command in a running container.
+  images      List images used by the created containers
+  kill        Force stop service containers.
+  logs        View output from containers
+  pause       Pause services
+  port        Print the public port for a port binding.
+  ps          List containers
+  pull        Pull service images
+  push        Push service images
+  restart     Restart service containers
+  rm          Removes stopped service containers
+  run         Run a one-off command on a service.
+  start       Start services
+  stop        Stop services
+  top         Display the running processes
+  unpause     Unpause services
+  up          Create and start containers
+  version     Show the Docker Compose version information
+  wait        Block until the first service container stops
+
+
+```
+
+
 Để sử dụng Docker Compose, bạn cần tạo một tệp YAML có tên docker-compose.yml trong thư mục dự án của mình. Trong tệp này, bạn định nghĩa các dịch vụ cần triển khai, các mạng và các cài đặt liên quan khác. Sau đó, bạn có thể sử dụng các lệnh Docker Compose như docker-compose up, docker-compose down, và docker-compose ps để quản lý ứng dụng của mình.
+
+ví dụ như trong project
+1. tạo file docker-compose.yml
+```bash
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "8081:8080"
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+```
+
+2. chạy lệnh docker-compose up -d 
+

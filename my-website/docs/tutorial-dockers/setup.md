@@ -52,7 +52,7 @@ docker run hello-world
 + kích hoạt Hyper-V: windows -> Apps and Features -> Programs and Features -> Turn Windows Features on or off -> Hyper-V -> restart máy
 + lỗi proxy: vào docker desktop -> setting -> resources -> proxies fix với http và https đổi thành : http://10.255.188.84:3128 còn với Bypass proxy... : đổi thành 10.*
 
-## Hướng dẫn cài đặt docker trên ubuntu
+## Hướng dẫn cài đặt docker bên trong ubuntu sử dụng máy ảo WSL  
 **Bước 1**: Cài đặt WSL:
 + Mở PowerShell với quyền quản trị (Run as Administrator).
 + Chạy lệnh sau để bật tính năng WSL trên Windows:
@@ -87,7 +87,7 @@ sudo docker --version
 **Bước 5**:Sử dụng Docker trong Ubuntu trên WSL:
 + Bây giờ bạn có thể sử dụng Docker trong Ubuntu trên WSL như trên bất kỳ môi trường Linux nào. Bạn có thể tạo và quản lý các container Docker thông qua Terminal của Ubuntu.
 
-## Hướng dẫn cài đặt docker trên centOS7
+## Hướng dẫn cài đặt docker trên centOS7 sử dụng máy ảo VirtualBox
 Để cài đặt Docker trên CentOS 7 sử dụng Windows, bạn cần cài đặt Docker trên máy ảo CentOS 7 chạy trên Windows (chẳng hạn, sử dụng ứng dụng Oracle VirtualBox). Dưới đây là hướng dẫn cài đặt Docker trên CentOS 7 trong môi trường máy ảo Windows:
 
 **Bước 1**: Cài đặt Máy ảo CentOS 7 trên Windows:
